@@ -15,20 +15,20 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .statusbar{display:flex;align-items:center;justify-content:space-between;padding:11px 22px 2px}
 .statusbar span{font-weight:800;font-size:13px;line-height:19.5px;color:#1D1E19}
 
-.appbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1.25px solid #F6F6F6}
+.appbar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1.25px solid #F6F6F6}
 .appbar .ttl{font-weight:800;font-size:18px;line-height:27px;color:#1D1E19;text-align:right}
 .appbar .sub{font-weight:400;font-size:12.5px;line-height:18.75px;color:#1D1E19;text-align:right}
 .back{display:flex;align-items:center;gap:6px;font-weight:700;font-size:16px;line-height:24px;color:#1D1E19}
 
 .brandbar{display:flex;align-items:center;justify-content:space-between;
-          padding:14px 18px 12px;border-bottom:1.25px solid #F6F6F6}
+          padding:10px 18px 9px;border-bottom:1.25px solid #F6F6F6}
 .oex{font-weight:800;font-size:20px;line-height:30px;letter-spacing:1px;color:#1D1E19}
 .brandbar img{height:30px;width:auto}
 
-.scroll{flex:1;display:flex;flex-direction:column;gap:10px;padding:16px 18px;overflow:hidden}
+.scroll{flex:1;display:flex;flex-direction:column;gap:10px;padding:12px 18px 10px;overflow:hidden}
 .sticky::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:28px;
   background:linear-gradient(to top,#fff,rgba(255,255,255,0));pointer-events:none}
-.sticky{background:#FFFFFF;border-top:1.25px solid #F6F6F6;padding:12px 16px 16px;
+.sticky{background:#FFFFFF;border-top:1.25px solid #F6F6F6;padding:10px 16px 12px;
         display:flex;flex-direction:column;gap:8px;align-items:stretch;position:relative}
 
 .h1{font-weight:800;font-size:22px;line-height:33px;color:#1D1E19}
@@ -51,7 +51,7 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .card.sel{border-color:#D8042A}
 .card.p0{padding:16px 16px 2px;gap:0}
 .rowline{display:flex;align-items:center;justify-content:space-between;gap:10px;
-         padding:13px 0;border-bottom:1.25px solid #F6F6F6}
+         padding:10px 0;border-bottom:1.25px solid #F6F6F6}
 .rowline.pack{justify-content:normal;gap:12px}
 .rowline:last-child{border-bottom:none}
 .tight .rowline{padding:9px 0}
@@ -100,8 +100,8 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .track{height:6px;border-radius:4px;background:#C1C1C1;overflow:hidden;display:flex}
 .track .fill{background:#1D1E19;height:100%}
 
-.steps{display:flex;justify-content:space-between;padding-top:10px;position:relative;
-       height:58px}
+.steps{display:flex;justify-content:space-between;padding-top:8px;position:relative;
+       height:54px}
 .step{position:relative;z-index:1}
 .step .lb{position:absolute;top:32px;left:50%;transform:translateX(-50%);white-space:nowrap}
 .sdot{padding:4px;border-radius:999px;background:#C1C1C1}
@@ -184,7 +184,7 @@ a[href^="tel:"], a[x-apple-data-detectors], [x-apple-data-detectors]{
   text-decoration:inherit!important; -webkit-text-decoration-color:inherit!important;
   text-decoration-color:inherit!important; pointer-events:none!important}
 .okrow{display:flex;align-items:center;gap:6px}
-.okmark{flex:none}
+.okmark{flex:none;transition:opacity .5s ease}
 /* The design files freeze their content; here it scrolls — but only when there
    is genuinely something below the fold. `auto` does that; `overscroll-behavior`
    kills the rubber-band bounce that otherwise makes a full screen feel scrollable. */
@@ -248,7 +248,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
   </div>
 
   <div style="display:flex;flex-direction:column;gap:3px;margin-top:auto;padding-bottom:4px">
-    <div class="lbl r" style="padding:16px 0 8px">רוצה לשנות משהו?</div>
+    <div class="lbl r" style="padding:10px 0 6px">רוצה לשנות משהו?</div>
     <div class="btnpair">
       <div class="btn outline"><svg class="ico" width="22.0" height="18" viewBox="-0.81 0.43 20.95 17.14" style="height:18px" fill="none" stroke="#D8042A" stroke-width="1.190" stroke-linecap="round" stroke-linejoin="round"><path d="M7.1665 16.5004V12.3339C7.1665 11.6709 7.42989 11.035 7.89871 10.5662C8.36753 10.0974 9.00339 9.83398 9.66641 9.83398C10.3294 9.83398 10.9653 10.0974 11.4341 10.5662C11.9029 11.035 12.1663 11.6709 12.1663 12.3339V16.5004"/><path d="M3.83301 6.80469V16.501H15.4992V6.80469"/><path d="M0.5 9.83302L9.66632 1.5L18.8326 9.83302"/></svg><span class="t">עדכון כתובת</span></div>
       <div class="btn outline"><svg class="ico" width="18.0" height="18" viewBox="0 0 24 24" style="height:18px" fill="none" stroke="#D8042A" stroke-width="1.667" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 2.99707 0 18.00003c0 0.8284 0.67157 1.5 1.5 1.5l18 0c0.8284 0 1.5 -0.6716 1.5 -1.5l0 -18.00003c0 -0.82843 -0.6716 -1.5 -1.5 -1.5l-18 0c-0.82843 0 -1.5 0.67157 -1.5 1.5Z"/><path d="m12.0029 22.4971 0 -21.00003"/><path d="m12.0029 11.9971 10 0"/></svg><span class="t">שינוי לאיסוף מלוקר</span></div>
@@ -345,7 +345,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
   </div>
 
   <div style="display:flex;flex-direction:column;gap:3px;margin-top:auto;padding-bottom:4px">
-    <div class="lbl r" style="padding:16px 0 8px">רוצה לשנות משהו?</div>
+    <div class="lbl r" style="padding:10px 0 6px">רוצה לשנות משהו?</div>
     <div class="btn outline"><svg class="ico" width="18.0" height="18" viewBox="0 0 24 24" style="height:18px" fill="none" stroke="#D8042A" stroke-width="1.667" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 2.99707 0 18.00003c0 0.8284 0.67157 1.5 1.5 1.5l18 0c0.8284 0 1.5 -0.6716 1.5 -1.5l0 -18.00003c0 -0.82843 -0.6716 -1.5 -1.5 -1.5l-18 0c-0.82843 0 -1.5 0.67157 -1.5 1.5Z"/><path d="m12.0029 22.4971 0 -21.00003"/><path d="m12.0029 11.9971 10 0"/></svg><span class="t">שינוי נקודת איסוף</span></div>
   </div>
 </div>
@@ -654,6 +654,10 @@ function saveAddress(form){
       if(cells.length < 2 || label(cells[0]) !== "כתובת") return;
       cells[1].innerHTML = CHECK + '<span>' + text + '</span>';
       cells[1].classList.add("okrow");
+      /* The tick confirms the save; once it has been seen it stops being news. */
+      const mark = cells[1].querySelector(".okmark");
+      setTimeout(()=>{ if(mark) mark.style.opacity = "0"; }, 3200);
+      setTimeout(()=>{ if(mark) mark.remove(); cells[1].classList.remove("okrow"); }, 3800);
     });
   });
 }
