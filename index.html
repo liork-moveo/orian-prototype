@@ -204,6 +204,7 @@ html,body{overscroll-behavior:none}
    and leaves white below it on a tall window. In the prototype it must stretch. */
 section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!important}
 .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none!important}
+.mctl.off{opacity:.38;pointer-events:none;cursor:default}
 .sheet{transition:height .22s ease}
 .sheet .grab{cursor:grab;touch-action:none;padding-bottom:8px!important}
 .sheet .grab:active{cursor:grabbing}
@@ -1005,35 +1006,21 @@ function buildMap(sec){
     if(b) b.addEventListener("click", e=>{ e.stopPropagation(); fn(); }); };
   ctl("zin",  ()=> map.zoomIn());
   ctl("zout", ()=> map.zoomOut());
-  ctl("locate", ()=>{
-    if(cfg.user){
+  if(cfg.user){
+    ctl("locate", ()=>{
       const target = {center: HERE, zoom: 15};
       map.flyTo(Object.assign({duration: 650, essential: true}, target));
       setTimeout(()=>{                       // arrive even if the animation cannot run
         const c = map.getCenter();
         if(Math.abs(c.lng - HERE[0]) + Math.abs(c.lat - HERE[1]) > 0.0004) map.jumpTo(target);
       }, 800);
-      return;
-    }
-    /* Nothing has been shared yet, so there is no "me" to centre on. Put the
-       sheet back where it started and bring the prompt that asks for it into
-       view, rather than moving a map to a place we do not know. */
-    const sheet = sec.querySelector(".sheet"), body = sec.querySelector(".sheetbody");
-    if(sheet){
-      sheet.style.height = ((parseFloat(sheet.dataset.rest || "0.62")) * 100).toFixed(2) + "%";
-      sheet.dataset.full = "0";
-    }
-    const ex = sec.querySelector(".mctl.expand");
-    if(ex && ex.dataset.expandIcon) ex.innerHTML = ex.dataset.expandIcon;
-    if(body){
-      body.scrollTop = 0;
-      const prompt = body.querySelector(".card.fill");
-      if(prompt) prompt.scrollIntoView({block: "nearest"});
-    }
-    /* resize only — it keeps the same centre. Re-framing here would move the
-       map, which is the one thing this control must not do. */
-    setTimeout(()=> map.resize(), 260);
-  });
+    });
+  } else {
+    /* There is no "me" to centre on until location has been shared, so the
+       control is present but off rather than doing something misleading. */
+    const b = sec.querySelector(".mctl.locate");
+    if(b){ b.classList.add("off"); b.setAttribute("aria-disabled", "true"); }
+  }
 }
 if(window.mapboxgl){ mapboxgl.accessToken = MAP_TOKEN; }
 
