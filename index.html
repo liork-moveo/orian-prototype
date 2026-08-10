@@ -725,6 +725,8 @@ function initSheet(sec){
     if(!dragging) return;
     dragging = false;
     sheet.style.transition = "";          // it stays exactly where it was let go
+    sheet.dataset.full = (sheet.getBoundingClientRect().height /
+                          host.getBoundingClientRect().height) <= 0.12 ? "1" : "0";
     const m = maps[sec.dataset.id];
     if(m){ m.resize(); frameMap(sec, m, MAPS[sec.dataset.id] || {}); }
   };
@@ -757,10 +759,12 @@ function wireExpand(sec){
   const shrinkIcon = shrinkSrc ? shrinkSrc.innerHTML : expandIcon;
   btn.addEventListener("click", e => {
     e.stopPropagation();
-    const host = sheet.parentElement;
-    const now = sheet.getBoundingClientRect().height / host.getBoundingClientRect().height;
+    /* Read the state off the element, not off the measured height: mid-transition
+       a measurement reports something in between and the toggle flips the wrong
+       way. */
     const rest = parseFloat(sheet.dataset.rest || "0.62");
-    const full = now <= 0.12;                        // already giving the map the screen
+    const full = sheet.dataset.full === "1";
+    sheet.dataset.full = full ? "0" : "1";
     sheet.style.height = ((full ? rest : 0.085) * 100).toFixed(2) + "%";
     btn.innerHTML = full ? expandIcon : shrinkIcon;
     const m = maps[sec.dataset.id];
