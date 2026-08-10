@@ -34,10 +34,10 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .h1{font-weight:800;font-size:22px;line-height:33px;color:#1D1E19}
 .hello{font-weight:700;font-size:24px;line-height:36px;color:#1D1E19}
 .h2{font-weight:800;font-size:16px;line-height:24px;color:#1D1E19}
-.h3{font-weight:700;font-size:15px;line-height:22.5px;color:#1D1E19}
-.h3x{font-weight:800;font-size:15px;line-height:22.5px;color:#1D1E19}
-.p{font-weight:400;font-size:15px;line-height:22.5px;color:#1D1E19}
-.sm{font-weight:400;font-size:12.5px;line-height:18.75px;color:#1D1E19}
+.h3{font-weight:700;font-size:16px;line-height:24px;color:#1D1E19}
+.h3x{font-weight:800;font-size:16px;line-height:24px;color:#1D1E19}
+.p{font-weight:400;font-size:16px;line-height:24px;color:#1D1E19}
+.sm{font-weight:400;font-size:13px;line-height:19.5px;color:#1D1E19}
 .xs{font-weight:400;font-size:12px;line-height:18px;color:#1D1E19}
 .lbl{font-weight:700;font-size:14px;line-height:21px;color:#1D1E19}
 .eyebrow{font-weight:800;font-size:13px;line-height:19.5px;color:#1D1E19}
@@ -72,14 +72,14 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .radio.on{border:5px solid #D8042A}
 .check{width:22px;height:22px;border-radius:999px;border:1.25px solid #1D1E19;background:#fff;flex:none}
 
-.btn{height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
-     gap:10px;padding:0 15px}
+.btn{height:52px;flex:none;border-radius:16px;display:flex;align-items:center;
+     justify-content:center;gap:10px;padding:0 15px}
 .btn .t{font-weight:700;font-size:17px;line-height:25.5px;white-space:nowrap}
 /* 287:5644 — a fixed 8.5px between the two buttons. Spare width is shared
    equally between them (grow 1 on a content-sized basis), so the space around
    the icon and the text grows by the same amount in both. */
 .btnpair{display:flex;gap:8.5px}
-.btnpair .btn{flex:1 1 auto;padding-inline-start:11.25px;padding-inline-end:15px}
+.btnpair .btn{flex:1 1 auto;min-height:52px;padding-inline-start:11.25px;padding-inline-end:15px}
 .btn.primary{background:#D8042A}.btn.primary .t{color:#fff}
 .btn.outline{background:#fff;border:1.25px solid #D8042A;color:#D8042A}.btn.outline .t{color:#D8042A}
 .btn.ghost{background:#fff;border:1.25px solid #F6F6F6;color:#1D1E19}.btn.ghost .t{color:#1D1E19}
