@@ -574,7 +574,13 @@ function show(id, push){
     b.classList.toggle("cur", b.dataset.id===id));
   const sc = next && next.querySelector(".scroll");
   if(sc) sc.scrollTop = top;
-  if(next){ fillLockerList(next); initSheet(next); }
+  if(next){
+    fillLockerList(next);
+    initSheet(next);
+    const cfg = MAPS[next.dataset.id];
+    if(cfg && cfg.sel !== -1 && next.querySelector(".sheetbody .card .h3x"))
+      pickPoint(next, cfg.sel === undefined ? 0 : cfg.sel, false);
+  }
   if(next && window.mapboxgl && MAP_TOKEN){
     if(!maps[id]) buildMap(next); else maps[id].resize();
   }
@@ -812,6 +818,11 @@ function fillLockerList(sec){
   const existing = [...body.querySelectorAll(".card")].filter(c => c.querySelector(".h3x"));
   if(!existing.length) return;
   body.dataset.filled = "1";
+  /* One card at a time carries the actions, and pickPoint is what puts them
+     there — so the pair drawn into the design file is cleared first. */
+  existing.forEach(c => c.querySelectorAll(".row").forEach(r => {
+    if(r.querySelector(".btn")) r.remove();
+  }));
   const withChip = !!existing[0].querySelector(".chip");
   POINTS.forEach((p, i) => {
     if(p.listed) return;
@@ -835,8 +846,23 @@ function fillLockerList(sec){
 
 /* Picking a point marks it in the list and on the map, in place — nothing is
    reordered and the location prompt keeps its position. */
-function pickPoint(sec, i){
+function pickPoint(sec, i, fly){
   sec.querySelectorAll(".mk").forEach(m => m.classList.toggle("sel", +m.dataset.i === i));
+  const map = maps[sec.dataset.id];
+  if(map && fly !== false && POINTS[i]){
+    /* Centre the chosen locker and close in a little, gently enough that the eye
+       can follow where the map is going. If the animation cannot run — a paused
+       tab, a device that throttles it — the camera is still put where it belongs
+       rather than left behind. */
+    const target = {center: POINTS[i].at,
+                    zoom: Math.min(Math.max(map.getZoom() + 1, 14.8), 16.2)};
+    map.flyTo(Object.assign({duration: 650, essential: true}, target));
+    setTimeout(()=>{
+      const c = map.getCenter();
+      const off = Math.abs(c.lng - target.center[0]) + Math.abs(c.lat - target.center[1]);
+      if(off > 0.0004) map.jumpTo(target);
+    }, 800);
+  }
   const cards = [...sec.querySelectorAll(".sheetbody .card")].filter(c => c.querySelector(".h3x"));
   if(cards[i]) cards[i].scrollIntoView({block: "nearest"});
   cards.forEach((c, n) => {
