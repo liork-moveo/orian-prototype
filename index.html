@@ -96,16 +96,18 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .track{height:6px;border-radius:4px;background:#C1C1C1;overflow:hidden;display:flex}
 .track .fill{background:#1D1E19;height:100%}
 
-.steps{display:grid;grid-template-columns:repeat(4,1fr);align-items:start;
-       padding-top:10px;position:relative}
-.step{display:flex;flex-direction:column;align-items:center;gap:4px;z-index:1}
+.steps{display:flex;justify-content:space-between;padding-top:10px;position:relative;
+       height:58px}
+.step{position:relative;z-index:1}
+.step .lb{position:absolute;top:32px;left:50%;transform:translateX(-50%);white-space:nowrap}
 .sdot{padding:4px;border-radius:999px;background:#C1C1C1}
 .sdot.on{background:#1D1E19}
 .sdot .n{width:18px;height:18px;border:1px solid #fff;border-radius:10px;display:flex;
          align-items:center;justify-content:center;font-weight:700;font-size:10.5px;
          line-height:15.75px;color:#fff}
-.step .lb{font-weight:400;font-size:10.5px;line-height:15.75px;color:#1D1E19;text-align:center}
-.srail{position:absolute;top:24px;height:3px;border-radius:999px;
+.step .lb{font-weight:400;font-size:10.5px;line-height:15.75px;color:#1D1E19}
+/* 23px = the .steps padding-top (10) plus half a 26px dot */
+.srail{position:absolute;top:23px;height:3px;border-radius:999px;
        transform:translateY(-50%)}
 
 .map{background:#F6F6F6;flex:none;position:relative}
@@ -191,7 +193,7 @@ section.screen.on{display:flex}
       <div class="eyebrow r">צפי הגעה</div>
       <div class="r" style="font-weight:800;font-size:22px;line-height:33px;color:#1D1E19">יום שלישי, 12.05</div>
       <div class="sm r">נעדכן אותך עם התקדמות המשלוח</div>
-      <div class="steps"><div class="srail" style="right:12.5%;width:25.00%;background:#1D1E19"></div><div class="srail" style="left:12.5%;width:50.00%;background:#C1C1C1"></div><div class="step"><div class="sdot on"><div class="n">1</div></div><div class="lb">הוזמנה</div></div><div class="step"><div class="sdot on"><div class="n">2</div></div><div class="lb">נשלחה</div></div><div class="step"><div class="sdot"><div class="n">3</div></div><div class="lb">בדרך למסירה</div></div><div class="step"><div class="sdot"><div class="n">4</div></div><div class="lb">נמסרה</div></div></div>
+      <div class="steps"><div class="srail" style="right:14px;width:calc((100% - 28px) * 0.3333);background:#1D1E19"></div><div class="srail" style="left:14px;width:calc((100% - 28px) * 0.6667);background:#C1C1C1"></div><div class="step"><div class="sdot on"><div class="n">1</div></div><div class="lb">הוזמנה</div></div><div class="step"><div class="sdot on"><div class="n">2</div></div><div class="lb">נשלחה</div></div><div class="step"><div class="sdot"><div class="n">3</div></div><div class="lb">בדרך למסירה</div></div><div class="step"><div class="sdot"><div class="n">4</div></div><div class="lb">נמסרה</div></div></div>
     </div>
 
     <div class="card p0">
@@ -281,7 +283,7 @@ section.screen.on{display:flex}
       <div class="eyebrow r">צפי הגעה ללוקר</div>
       <div class="r" style="font-weight:800;font-size:22px;line-height:33px;color:#1D1E19">יום שלישי, 12.05</div>
       <div class="sm r">תקבל/י קוד איסוף ב־SMS ברגע שהחבילה תגיע</div>
-      <div class="steps"><div class="srail" style="right:12.5%;width:25.00%;background:#1D1E19"></div><div class="srail" style="left:12.5%;width:50.00%;background:#C1C1C1"></div><div class="step"><div class="sdot on"><div class="n">1</div></div><div class="lb">הוזמנה</div></div><div class="step"><div class="sdot on"><div class="n">2</div></div><div class="lb">נשלחה</div></div><div class="step"><div class="sdot"><div class="n">3</div></div><div class="lb">בדרך למסירה</div></div><div class="step"><div class="sdot"><div class="n">4</div></div><div class="lb">נמסרה</div></div></div>
+      <div class="steps"><div class="srail" style="right:14px;width:calc((100% - 28px) * 0.3333);background:#1D1E19"></div><div class="srail" style="left:14px;width:calc((100% - 28px) * 0.6667);background:#C1C1C1"></div><div class="step"><div class="sdot on"><div class="n">1</div></div><div class="lb">הוזמנה</div></div><div class="step"><div class="sdot on"><div class="n">2</div></div><div class="lb">נשלחה</div></div><div class="step"><div class="sdot"><div class="n">3</div></div><div class="lb">בדרך למסירה</div></div><div class="step"><div class="sdot"><div class="n">4</div></div><div class="lb">נמסרה</div></div></div>
     </div>
 
     <div class="card sel" style="padding:10px 14px">
