@@ -210,6 +210,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
          height:13px;border-radius:999px;background:#D8042A;border:2px solid #fff;
          box-shadow:0 1px 3px rgba(0,0,0,.22)}
 .mk.sel .dot{display:none}
+.mk.ctx{cursor:default;pointer-events:none}
 .mk.cursor{position:absolute;left:50%;top:50%;z-index:2;
            transform:translate(-50%,-100%);pointer-events:none}
 .useracc{width:44px;height:44px;border-radius:999px;background:rgba(47,111,235,.16);
@@ -751,10 +752,19 @@ document.querySelectorAll("#list button").forEach(b=> b.onclick = ()=>{
    Tel Aviv coordinates and the drawn pins become real markers. If the script
    is blocked, everything below is skipped and the SVG stays. */
 const MAP_TOKEN = "pk.eyJ1IjoibGlvcmttb3ZlbzEyMzQiLCJhIjoiY21xcWd0djQ4MDQ0ZTJzcXZsNnBveHZydSJ9.-ANesy8sOPNF6TYeBlam5w";
+/* The three the sheet lists, at their real addresses. */
 const POINTS = [
   {name:"לוקר פזומט — תחנת פז",    at:[34.7920, 32.0908]},
   {name:"נקודת איסוף — סופר יודה", at:[34.7818, 32.0853]},
   {name:"לוקר — קניון דיזנגוף",    at:[34.7745, 32.0790]},
+];
+/* Invented lockers, so the map reads like a real network rather than three lonely
+   points. They are context only — a locker with no card behind it would be a dead
+   end, so they do not take a tap. */
+const NEARBY = [
+  [34.7739, 32.0872], [34.7810, 32.0951], [34.7889, 32.0793],
+  [34.7692, 32.0815], [34.7958, 32.0857], [34.7861, 32.0977],
+  [34.7703, 32.0928], [34.7952, 32.0952],
 ];
 const HERE = [34.7856, 32.0862];
 const MAPS = {
@@ -839,11 +849,17 @@ function buildMap(sec){
   maps[sec.dataset.id] = map;
 
   const sel = cfg.sel === undefined ? 0 : cfg.sel;   // -1 = nothing chosen yet
-  if(cfg.pins !== false) POINTS.forEach((p, i)=>{
-    const el = marker(i === sel, i);
-    if(cfg.pick) el.addEventListener("click", ()=> pickPoint(sec, i));
-    new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(p.at).addTo(map);
-  });
+  if(cfg.pins !== false){
+    NEARBY.forEach(at=>{
+      const el = marker(false, -1); el.classList.add("ctx");
+      new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(at).addTo(map);
+    });
+    POINTS.forEach((p, i)=>{
+      const el = marker(i === sel, i);
+      if(cfg.pick) el.addEventListener("click", ()=> pickPoint(sec, i));
+      new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(p.at).addTo(map);
+    });
+  }
   if(cfg.user){
     const acc = document.createElement("div"); acc.className = "useracc";
     const dot = document.createElement("div"); dot.className = "userdot";
