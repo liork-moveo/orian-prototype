@@ -705,7 +705,7 @@ function initSheet(sec){
   const declared = (sheet.getAttribute("style") || "").match(/height:\s*([\d.]+)%/);
   const designed = declared ? parseFloat(declared[1]) / 100
                             : sheet.getBoundingClientRect().height / host.getBoundingClientRect().height;
-  const MIN = 0.2, MAX = 0.94;
+  const MIN = 0.085, MAX = 0.94;
   sheet.dataset.rest = designed;
   const setH = f => { sheet.style.height = (Math.min(MAX, Math.max(MIN, f)) * 100).toFixed(2) + "%"; };
   setH(designed);
@@ -760,8 +760,8 @@ function wireExpand(sec){
     const host = sheet.parentElement;
     const now = sheet.getBoundingClientRect().height / host.getBoundingClientRect().height;
     const rest = parseFloat(sheet.dataset.rest || "0.62");
-    const full = now <= 0.235;                       // already giving the map the screen
-    sheet.style.height = ((full ? rest : 0.2) * 100).toFixed(2) + "%";
+    const full = now <= 0.12;                        // already giving the map the screen
+    sheet.style.height = ((full ? rest : 0.085) * 100).toFixed(2) + "%";
     btn.innerHTML = full ? expandIcon : shrinkIcon;
     const m = maps[sec.dataset.id];
     if(m) setTimeout(()=>{ m.resize(); frameMap(sec, m, MAPS[sec.dataset.id] || {}); }, 260);
