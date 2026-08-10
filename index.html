@@ -585,6 +585,11 @@ function show(id, push){
   }
   if(next && window.mapboxgl && MAP_TOKEN){
     if(!maps[id]) buildMap(next); else maps[id].resize();
+    /* A map built inside a panel that was hidden a moment ago has measured
+       nothing yet, so it never makes its first paint. Measure again once the
+       browser has laid the screen out. */
+    const m = maps[id];
+    if(m) requestAnimationFrame(()=>{ m.resize(); frameMap(next, m, MAPS[id] || {}); });
   }
 }
 function label(el){ return (el.textContent||"").replace(/\s+/g," ").trim(); }
@@ -988,8 +993,9 @@ function buildMap(sec){
   quieten();
 
   frameMap(sec, map, cfg);
-  map.on("load", ()=>{ quieten(); frameMap(sec, map, cfg); });
-  setTimeout(()=> frameMap(sec, map, cfg), 400);   // containers can still be settling
+  map.on("load", ()=>{ quieten(); map.resize(); frameMap(sec, map, cfg); });
+  map.once("styledata", ()=> map.resize());
+  setTimeout(()=>{ map.resize(); frameMap(sec, map, cfg); }, 400);
 
   const ctl = (name, fn)=>{ const b = sec.querySelector(".mctl." + name);
     if(b) b.addEventListener("click", e=>{ e.stopPropagation(); fn(); }); };
