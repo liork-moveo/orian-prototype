@@ -204,7 +204,9 @@ html,body{overscroll-behavior:none}
    and leaves white below it on a tall window. In the prototype it must stretch. */
 section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!important}
 .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{display:none!important}
-.mctl.off{opacity:.38;pointer-events:none;cursor:default}
+.mctl.off{pointer-events:none;cursor:default;background:#F1F0EE!important;
+          border-color:#E4E2DD!important;box-shadow:none!important}
+.mctl.off svg{stroke:#C1C1C1}
 .sheet{transition:height .22s ease}
 .sheet .grab{cursor:grab;touch-action:none;padding-bottom:8px!important}
 .sheet .grab:active{cursor:grabbing}
