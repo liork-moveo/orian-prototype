@@ -203,20 +203,24 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
 .sheet{transition:height .22s ease}
 .sheet .grab{cursor:grab;touch-action:none;padding-bottom:8px!important}
 .sheet .grab:active{cursor:grabbing}
-.mk{position:relative;width:34px;height:42px;cursor:pointer}
+/* No `position` here: Mapbox pins each marker to its coordinate with its own
+   absolute positioning, and a rule of ours would drop them back into normal
+   flow — where they line up next to each other and drift with the map. */
+.mk{width:34px;height:42px;cursor:pointer}
 .mk .drop{display:none}
 .mk.sel .drop{display:block}
-.mk .dot{position:absolute;left:50%;bottom:-6.5px;transform:translateX(-50%);width:13px;
-         height:13px;border-radius:999px;background:#D8042A;border:2px solid #fff;
-         box-shadow:0 1px 3px rgba(0,0,0,.22)}
+.mk .dot{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);width:18px;
+         height:18px;border-radius:999px;background:#D8042A;border:3px solid #fff;
+         box-shadow:0 2px 6px rgba(29,30,25,.45)}
+.mk .drop{filter:drop-shadow(0 2px 5px rgba(29,30,25,.45))}
 .mk.sel .dot{display:none}
 
 .mk.cursor{position:absolute;left:50%;top:50%;z-index:2;
            transform:translate(-50%,-100%);pointer-events:none}
-.useracc{width:44px;height:44px;border-radius:999px;background:rgba(47,111,235,.16);
-         border:1.25px solid rgba(47,111,235,.35)}
-.userdot{width:14px;height:14px;border-radius:999px;background:#2F6FEB;border:2px solid #fff;
-         box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.useracc{width:52px;height:52px;border-radius:999px;background:rgba(47,111,235,.18);
+         border:1.25px solid rgba(47,111,235,.40)}
+.userdot{width:18px;height:18px;border-radius:999px;background:#2F6FEB;border:3px solid #fff;
+         box-shadow:0 2px 6px rgba(29,30,25,.45)}
 </style></head>
 <body><div id="stage"><div id="device"><section class="screen" data-id="1-landing"><div class="brandbar"><img src="data:image/webp;base64,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" alt="Orian Express"><div></div></div>
 <div class="scroll" style="gap:20px;padding-top:18px">
@@ -913,8 +917,22 @@ function buildMap(sec){
     const c = marker(true); c.classList.add("cursor");
     host.insertBefore(c, host.firstChild.nextSibling);
   }
+  /* The street style draws its own restaurants, shops and hotels. Ours are the
+     subject of this screen, so the basemap's markers step back and the streets
+     stay. */
+  const quieten = ()=>{
+    try{
+      map.getStyle().layers.forEach(l=>{
+        if(/^poi-label|^transit-label|^airport-label/.test(l.id))
+          map.setLayoutProperty(l.id, "visibility", "none");
+      });
+    }catch(e){}
+  };
+  map.on("styledata", quieten);
+  quieten();
+
   frameMap(sec, map, cfg);
-  map.on("load", ()=> frameMap(sec, map, cfg));
+  map.on("load", ()=>{ quieten(); frameMap(sec, map, cfg); });
   setTimeout(()=> frameMap(sec, map, cfg), 400);   // containers can still be settling
 
   const ctl = (name, fn)=>{ const b = sec.querySelector(".mctl." + name);
