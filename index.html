@@ -210,7 +210,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
          height:13px;border-radius:999px;background:#D8042A;border:2px solid #fff;
          box-shadow:0 1px 3px rgba(0,0,0,.22)}
 .mk.sel .dot{display:none}
-.mk.ctx{cursor:default;pointer-events:none}
+
 .mk.cursor{position:absolute;left:50%;top:50%;z-index:2;
            transform:translate(-50%,-100%);pointer-events:none}
 .useracc{width:44px;height:44px;border-radius:999px;background:rgba(47,111,235,.16);
@@ -570,7 +570,7 @@ function show(id, push){
     b.classList.toggle("cur", b.dataset.id===id));
   const sc = next && next.querySelector(".scroll");
   if(sc) sc.scrollTop = top;
-  if(next) initSheet(next);
+  if(next){ fillLockerList(next); initSheet(next); }
   if(next && window.mapboxgl && MAP_TOKEN){
     if(!maps[id]) buildMap(next); else maps[id].resize();
   }
@@ -687,24 +687,22 @@ document.querySelectorAll("section.screen").forEach(sec=>{
 })();
 
 /* ---- the bottom sheet drags, like a maps app ------------------------------
-   Three heights: a peek that leaves the map open, the height the screen was
-   designed at, and nearly full. Dragging the grabber moves it; letting go
-   snaps to the nearest of the three. */
+   It rests at the height the screen was designed at and then goes wherever it
+   is dragged — no snap points, since anything in between is a legitimate place
+   to leave it. The only limits are the two ends: enough map to be worth looking
+   at, and enough sheet to grab hold of. */
 function initSheet(sec){
   const sheet = sec.querySelector(".sheet"), grab = sheet && sheet.querySelector(".grab");
   if(!sheet || !grab || sheet.dataset.drag) return;
   sheet.dataset.drag = "1";
   const host = sheet.parentElement;
-  /* Take the middle stop from the height the screen was authored at, not from
-     whatever the sheet happens to measure right now — measuring mid-transition
-     locks the sheet to a stop that was never a design decision. */
+  /* Rest at the authored height, not at whatever it measures mid-transition. */
   const declared = (sheet.getAttribute("style") || "").match(/height:\s*([\d.]+)%/);
   const designed = declared ? parseFloat(declared[1]) / 100
                             : sheet.getBoundingClientRect().height / host.getBoundingClientRect().height;
-  const snaps = [0.26, Math.min(Math.max(designed, 0.34), 0.82), 0.9]
-                  .sort((a, b) => a - b);
-  const setH = f => { sheet.style.height = (f * 100).toFixed(2) + "%"; };
-  setH(snaps[1]);
+  const MIN = 0.2, MAX = 0.94;
+  const setH = f => { sheet.style.height = (Math.min(MAX, Math.max(MIN, f)) * 100).toFixed(2) + "%"; };
+  setH(designed);
 
   let startY = 0, startH = 0, dragging = false;
   grab.addEventListener("pointerdown", e => {
@@ -715,18 +713,14 @@ function initSheet(sec){
   });
   grab.addEventListener("pointermove", e => {
     if(!dragging) return;
-    const d = (startY - e.clientY) / host.getBoundingClientRect().height;
-    setH(Math.min(snaps[snaps.length-1], Math.max(snaps[0], startH + d)));
+    setH(startH + (startY - e.clientY) / host.getBoundingClientRect().height);
   });
   const end = () => {
     if(!dragging) return;
     dragging = false;
-    const now = sheet.getBoundingClientRect().height / host.getBoundingClientRect().height;
-    const near = snaps.reduce((a, b) => Math.abs(b-now) < Math.abs(a-now) ? b : a);
-    sheet.style.transition = "";
-    setH(near);
+    sheet.style.transition = "";          // it stays exactly where it was let go
     const m = maps[sec.dataset.id];
-    if(m) setTimeout(()=>{ m.resize(); frameMap(sec, m, MAPS[sec.dataset.id] || {}); }, 240);
+    if(m){ m.resize(); frameMap(sec, m, MAPS[sec.dataset.id] || {}); }
   };
   grab.addEventListener("pointerup", end);
   grab.addEventListener("pointercancel", end);
@@ -752,26 +746,38 @@ document.querySelectorAll("#list button").forEach(b=> b.onclick = ()=>{
    Tel Aviv coordinates and the drawn pins become real markers. If the script
    is blocked, everything below is skipped and the SVG stays. */
 const MAP_TOKEN = "pk.eyJ1IjoibGlvcmttb3ZlbzEyMzQiLCJhIjoiY21xcWd0djQ4MDQ0ZTJzcXZsNnBveHZydSJ9.-ANesy8sOPNF6TYeBlam5w";
-/* The three the sheet lists, at their real addresses. */
+/* The three the screens were designed with keep their place at the head of the
+   list. The rest are invented Tel Aviv lockers so the demo behaves like a real
+   network: each one has a pin, a card, and the same selection behaviour. */
 const POINTS = [
-  {name:"לוקר פזומט — תחנת פז",    at:[34.7920, 32.0908]},
-  {name:"נקודת איסוף — סופר יודה", at:[34.7818, 32.0853]},
-  {name:"לוקר — קניון דיזנגוף",    at:[34.7745, 32.0790]},
+  {name:"לוקר פזומט — תחנת פז",           at:[34.7876, 32.0961], listed:true},
+  {name:"נקודת איסוף — סופר יודה",        at:[34.7802, 32.0871], listed:true},
+  {name:"לוקר — קניון דיזנגוף",           at:[34.7742, 32.0783], listed:true},
+  {name:"לוקר — בזל 22",                  at:[34.7823, 32.0918],
+   addr:"בזל 22, תל אביב",                hours:"פתוח 24/7",              eta:"יום שלישי 12.05"},
+  {name:"לוקר — יהודה המכבי 30",          at:[34.7855, 32.0929],
+   addr:"יהודה המכבי 30, תל אביב",        hours:"פתוח 24/7",              eta:"יום שלישי 12.05"},
+  {name:"לוקר — בן יהודה 120",            at:[34.7715, 32.0865],
+   addr:"בן יהודה 120, תל אביב",          hours:"פתוח 24/7",              eta:"יום רביעי 13.05"},
+  {name:"נקודת איסוף — סופרמרקט נורדאו",  at:[34.7735, 32.0913],
+   addr:"שדרות נורדאו 18, תל אביב",       hours:"א׳–ה׳ 07:00–23:00",      eta:"יום רביעי 13.05"},
+  {name:"נקודת איסוף — קפה בוגרשוב",      at:[34.7715, 32.0793],
+   addr:"בוגרשוב 30, תל אביב",            hours:"א׳–ו׳ 08:00–20:00",      eta:"יום רביעי 13.05"},
+  {name:"לוקר — מנחם בגין 132",           at:[34.7889, 32.0730],
+   addr:"דרך מנחם בגין 132, תל אביב",     hours:"פתוח 24/7",              eta:"יום שלישי 12.05"},
+  {name:"נקודת איסוף — פארמה אלנבי",      at:[34.7722, 32.0654],
+   addr:"אלנבי 60, תל אביב",              hours:"א׳–ה׳ 08:00–21:00",      eta:"יום חמישי 14.05"},
+  {name:"לוקר — רוטשילד 30",              at:[34.7731, 32.0640],
+   addr:"שדרות רוטשילד 30, תל אביב",      hours:"פתוח 24/7",              eta:"יום חמישי 14.05"},
 ];
-/* Invented lockers, so the map reads like a real network rather than three lonely
-   points. They are context only — a locker with no card behind it would be a dead
-   end, so they do not take a tap. */
-const NEARBY = [
-  [34.7739, 32.0872], [34.7810, 32.0951], [34.7889, 32.0793],
-  [34.7692, 32.0815], [34.7958, 32.0857], [34.7861, 32.0977],
-  [34.7703, 32.0928], [34.7952, 32.0952],
-];
-const HERE = [34.7856, 32.0862];
+/* Standing on Ibn Gabirol, near Arlozorov — the middle of the three listed
+   lockers, so the demo opens on central Tel Aviv. */
+const HERE = [34.7808, 32.0863];
 const MAPS = {
   "1B-locker-select":            {center:[34.7845,32.0865], zoom:13.6, sel:-1, pick:true},
   "1Bplus-location-permission":  {center:[34.7845,32.0865], zoom:13.2, pins:false, still:true},
-  "1Bplusplus-location-granted": {center:[34.7856,32.0870], zoom:13.9, user:true},
-  "1B-map-full":                 {center:[34.7845,32.0862], zoom:13.1, user:true},
+  "1Bplusplus-location-granted": {center:[34.7856,32.0870], zoom:13.9, user:true, pick:true},
+  "1B-map-full":                 {center:[34.7845,32.0862], zoom:13.1, user:true, pick:true},
   "1B-addr-enter-address":       {center:[34.7818,32.0853], zoom:14.6, pins:false, cursor:true},
 };
 const maps = {};
@@ -784,11 +790,51 @@ function marker(sel, i){
     + 'fill="#D8042A"/></svg><span class="dot"></span>';
   return d;
 }
+/* Distance from the phone's position, in the units the cards already use. */
+function metresFrom(at){
+  const R = 6371000, rad = d => d * Math.PI / 180;
+  const dLat = rad(at[1] - HERE[1]), dLng = rad(at[0] - HERE[0]);
+  const a = Math.sin(dLat/2)**2 + Math.cos(rad(HERE[1])) * Math.cos(rad(at[1])) * Math.sin(dLng/2)**2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(a)));
+}
+const distLabel = m => m < 1000 ? m + " מ׳" : (m/1000).toFixed(1) + " ק״מ";
+
+/* The screens ship with the three cards they were designed around. The rest of
+   the network is written in here, in the same markup, so every pin on the map
+   has a card to select. */
+function fillLockerList(sec){
+  const body = sec.querySelector(".sheetbody");
+  if(!body || body.dataset.filled) return;
+  const existing = [...body.querySelectorAll(".card")].filter(c => c.querySelector(".h3x"));
+  if(!existing.length) return;
+  body.dataset.filled = "1";
+  const withChip = !!existing[0].querySelector(".chip");
+  POINTS.forEach((p, i) => {
+    if(p.listed) return;
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.cssText = "gap:0;padding:14px";
+    const chip = withChip
+      ? '<span class="chip" style="flex:none">' + distLabel(metresFrom(p.at)) + '</span>' : "";
+    card.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px">'
+      + '<div class="h3x">' + p.name + '</div>' + chip + '</div>'
+      + '<div class="r"><div class="sm">' + p.addr + '</div>'
+      + '<div class="sm">' + p.hours + ' · צפי: ' + p.eta + '</div></div>';
+    card.addEventListener("click", e => {
+      if(e.target.closest(".btn")) return;
+      pickPoint(sec, i);
+    });
+    body.appendChild(card);
+  });
+}
+
 /* Picking a point marks it in the list and on the map, in place — nothing is
    reordered and the location prompt keeps its position. */
 function pickPoint(sec, i){
   sec.querySelectorAll(".mk").forEach(m => m.classList.toggle("sel", +m.dataset.i === i));
   const cards = [...sec.querySelectorAll(".sheetbody .card")].filter(c => c.querySelector(".h3x"));
+  if(cards[i]) cards[i].scrollIntoView({block: "nearest"});
   cards.forEach((c, n) => {
     c.classList.toggle("sel", n === i);
     const row = c.querySelector(".pickrow");
@@ -819,8 +865,10 @@ function frameMap(sec, map, cfg){
   if(cfg.pins === false){
     map.setCenter(cfg.center);
   } else {
+    /* Frame the three the screen was designed around; the rest fall where they
+       fall, the way a real map shows a network. */
     const b = new mapboxgl.LngLatBounds();
-    POINTS.forEach(p => b.extend(p.at));
+    POINTS.filter(p=>p.listed).forEach(p => b.extend(p.at));
     if(cfg.user) b.extend(HERE);
     map.fitBounds(b, {padding: pad, maxZoom: 15.5, duration: 0});
   }
@@ -849,17 +897,11 @@ function buildMap(sec){
   maps[sec.dataset.id] = map;
 
   const sel = cfg.sel === undefined ? 0 : cfg.sel;   // -1 = nothing chosen yet
-  if(cfg.pins !== false){
-    NEARBY.forEach(at=>{
-      const el = marker(false, -1); el.classList.add("ctx");
-      new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(at).addTo(map);
-    });
-    POINTS.forEach((p, i)=>{
-      const el = marker(i === sel, i);
-      if(cfg.pick) el.addEventListener("click", ()=> pickPoint(sec, i));
-      new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(p.at).addTo(map);
-    });
-  }
+  if(cfg.pins !== false) POINTS.forEach((p, i)=>{
+    const el = marker(i === sel, i);
+    if(cfg.pick) el.addEventListener("click", ()=> pickPoint(sec, i));
+    new mapboxgl.Marker({element: el, anchor: "bottom"}).setLngLat(p.at).addTo(map);
+  });
   if(cfg.user){
     const acc = document.createElement("div"); acc.className = "useracc";
     const dot = document.createElement("div"); dot.className = "userdot";
