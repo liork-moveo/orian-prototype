@@ -174,10 +174,14 @@ section.screen.on{display:flex}
 .live::placeholder{color:#C1C1C1}
 .input:focus-within{border-color:#C1C1C1}
 .input.err:focus-within{border-color:#D8042A}
-/* iOS reads "1234-5678-90" as a phone number and wraps it in its own blue
-   tel: link. Keep our styling and let the tap reach the row underneath. */
-a[href^="tel:"]{color:inherit!important;text-decoration:inherit!important;
-                pointer-events:none}
+/* iOS reads "1234-5678-90" as a phone number and wraps it in a blue tel: link
+   of its own. The meta tag above turns that off; these rules are the belt to
+   its braces, matching both the href and the attribute iOS stamps on the node,
+   and letting the tap fall through to the row underneath. */
+a[href^="tel:"], a[x-apple-data-detectors], [x-apple-data-detectors]{
+  color:inherit!important; font:inherit!important;
+  text-decoration:inherit!important; -webkit-text-decoration-color:inherit!important;
+  text-decoration-color:inherit!important; pointer-events:none!important}
 .okrow{display:flex;align-items:center;gap:6px}
 .okmark{flex:none}
 /* The design files freeze their content; here it scrolls — but only when there
