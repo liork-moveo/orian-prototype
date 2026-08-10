@@ -109,7 +109,8 @@ body{background:#EEF0F2;font-family:Assistant,"Heebo",sans-serif;
 .sdot .n{width:18px;height:18px;border:1.25px solid #fff;border-radius:10px;display:flex;
          align-items:center;justify-content:center;font-weight:700;font-size:12px;
          line-height:18px;color:#fff}
-.sdot .n{padding-bottom:1.25px}
+/* set at runtime from the font that actually loads — see _flow.py */
+.sdot .n{padding-bottom:var(--digit-nudge,0px)}
 .step .lb{font-weight:400;font-size:12px;line-height:18px;color:#1D1E19}
 /* the dot centre: 8px of padding above it, then half of its 26px */
 .srail{position:absolute;top:21px;height:3px;border-radius:999px;
@@ -1005,6 +1006,28 @@ function buildMap(sec){
   ctl("locate", ()=> map.flyTo({center: cfg.user ? HERE : cfg.center, zoom: 15}));
 }
 if(window.mapboxgl){ mapboxgl.accessToken = MAP_TOKEN; }
+
+/* A digit has no descender, so a line box centred in the ring leaves its ink
+   sitting low — by how much depends on the font that actually loaded, which is
+   not the same on every phone. Measure the real one and correct for it. */
+function centreStepNumbers(){
+  const n = document.querySelector(".sdot .n");
+  if(!n) return;
+  const cs = getComputedStyle(n);
+  const ctx = document.createElement("canvas").getContext("2d");
+  if(!ctx) return;
+  ctx.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+  const m = ctx.measureText((n.textContent || "0").trim() || "0");
+  if(!m.fontBoundingBoxAscent) return;         // unsupported: leave as centred
+  const lh = parseFloat(cs.lineHeight);
+  const halfLead = (lh - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2;
+  const baseline = halfLead + m.fontBoundingBoxAscent;
+  const inkCentre = baseline - m.actualBoundingBoxAscent / 2 + m.actualBoundingBoxDescent / 2;
+  const nudge = (inkCentre - lh / 2) * 2;      // padding moves content by half
+  document.documentElement.style.setProperty("--digit-nudge", nudge.toFixed(2) + "px");
+}
+centreStepNumbers();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(centreStepNumbers);
 
 window.addEventListener("resize", ()=>{
   for(const id in maps) maps[id].resize();
