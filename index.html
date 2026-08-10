@@ -741,7 +741,7 @@ document.querySelectorAll("#list button").forEach(b=> b.onclick = ()=>{
    Mapbox is reachable, each map screen swaps that for a live map at the real
    Tel Aviv coordinates and the drawn pins become real markers. If the script
    is blocked, everything below is skipped and the SVG stays. */
-const MAP_TOKEN = window.OEX_MAPBOX_TOKEN || "";
+const MAP_TOKEN = "pk.eyJ1IjoibGlvcmttb3ZlbzEyMzQiLCJhIjoiY21xcWd0djQ4MDQ0ZTJzcXZsNnBveHZydSJ9.-ANesy8sOPNF6TYeBlam5w";
 const POINTS = [
   {name:"לוקר פזומט — תחנת פז",    at:[34.7920, 32.0908]},
   {name:"נקודת איסוף — סופר יודה", at:[34.7818, 32.0853]},
@@ -826,7 +826,7 @@ function buildMap(sec){
   ctl("zout", ()=> map.zoomOut());
   ctl("locate", ()=> map.flyTo({center: cfg.user ? HERE : cfg.center, zoom: 15}));
 }
-if(window.mapboxgl && MAP_TOKEN){ mapboxgl.accessToken = MAP_TOKEN; }
+if(window.mapboxgl){ mapboxgl.accessToken = MAP_TOKEN; }
 
 window.addEventListener("resize", ()=>{
   for(const id in maps) maps[id].resize();
