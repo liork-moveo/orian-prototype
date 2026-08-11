@@ -188,6 +188,17 @@ a[href^="tel:"], a[x-apple-data-detectors], [x-apple-data-detectors]{
   text-decoration:inherit!important; -webkit-text-decoration-color:inherit!important;
   text-decoration-color:inherit!important; pointer-events:none!important}
 .pinfoot{margin-top:auto}
+.field{position:relative}
+.comboList{display:none;position:absolute;top:100%;right:0;left:0;z-index:20;margin-top:6px;
+  background:#fff;border:1.25px solid #E4E2DD;border-radius:16px;overflow:hidden auto;
+  max-height:214px;box-shadow:0 10px 28px rgba(29,30,25,.14)}
+.comboList.on{display:block}
+.comboList button{display:block;width:100%;text-align:right;background:none;border:0;
+  padding:13px 14px;font:400 16px/24px Assistant,Heebo,sans-serif;color:#1D1E19;
+  cursor:pointer;direction:rtl}
+.comboList button + button{border-top:1.25px solid #EFEDEA}
+.comboList button:hover,.comboList button:focus-visible{background:#F6F6F6;outline:none}
+.comboList b{font-weight:800;color:#D8042A}
 .okrow{display:flex;align-items:center;gap:6px}
 .okmark{flex:none;transition:opacity .5s ease}
 /* The design files freeze their content; here it scrolls — but only when there
@@ -593,6 +604,7 @@ function show(id, push){
   const sc = next && next.querySelector(".scroll");
   if(sc) sc.scrollTop = top;
   if(next){
+    wireCombos(next);
     fillLockerList(next);
     initSheet(next);
     wireExpand(next);
@@ -758,6 +770,88 @@ function initSheet(sec){
   };
   grab.addEventListener("pointerup", end);
   grab.addEventListener("pointercancel", end);
+}
+
+/* ---- city and street are pickers, not free text -------------------------
+   Typing filters the list and the field completes from it, the way an address
+   field behaves everywhere else. Free text still goes through — the list is a
+   shortcut, not a gate. */
+const CITIES = ["תל אביב–יפו","ירושלים","חיפה","ראשון לציון","פתח תקווה","אשדוד","נתניה",
+  "באר שבע","בני ברק","חולון","רמת גן","אשקלון","רחובות","בת ים","הרצליה","כפר סבא",
+  "חדרה","מודיעין–מכבים–רעות","רעננה","גבעתיים","רמת השרון","הוד השרון","קריית אונו",
+  "ראש העין","נס ציונה","יבנה","לוד","רמלה","אילת","טבריה","עכו","נהריה","כרמיאל"];
+const STREETS = {
+  "תל אביב–יפו": ["רוטשילד","דיזנגוף","אבן גבירול","אלנבי","בן יהודה","הירקון","ארלוזורוב",
+    "בוגרשוב","קינג ג׳ורג׳","נחלת בנימין","שינקין","פרישמן","גורדון","בזל","יהודה המכבי",
+    "נורדאו","אחד העם","דרך מנחם בגין","דרך נמיר","ז׳בוטינסקי","הרצל","לילינבלום","יפת"],
+  "רמת גן": ["ביאליק","ז׳בוטינסקי","הרא״ה","אבא הלל סילבר","קריניצי","הרוא״ה"],
+  "גבעתיים": ["כצנלסון","ויצמן","סירקין","בורוכוב","המעגל"],
+  "הרצליה": ["סוקולוב","בן גוריון","אבא אבן","הנדיב","וייצמן"],
+};
+function comboFor(field){
+  const label = field.querySelector(".flbl");
+  if(!label) return null;
+  const t = label.textContent.trim();
+  if(t.indexOf("עיר") === 0) return "city";
+  if(t.indexOf("רחוב") === 0) return "street";
+  return null;
+}
+function wireCombos(sec){
+  const fields = [...sec.querySelectorAll(".field")].filter(comboFor);
+  if(!fields.length) return;
+  const cityField = fields.find(f => comboFor(f) === "city");
+  fields.forEach(field => {
+    if(field.dataset.combo) return;
+    field.dataset.combo = "1";
+    const kind = comboFor(field);
+    const box = field.querySelector(".input");
+    const input = box && box.querySelector(".live");
+    if(!input) return;
+    box.classList.add("combo");
+    const list = document.createElement("div");
+    list.className = "comboList";
+    field.appendChild(list);
+
+    const source = ()=>{
+      if(kind === "city") return CITIES;
+      const city = cityField && cityField.querySelector(".live");
+      return STREETS[(city ? city.value : "").trim()] || [];
+    };
+    const close = ()=> list.classList.remove("on");
+    const open = ()=>{
+      const q = input.value.trim();
+      const all = source();
+      const hits = (q ? all.filter(v => v.indexOf(q) > -1) : all).slice(0, 8);
+      if(!hits.length){ close(); return; }
+      list.innerHTML = hits.map(v => {
+        const i = q ? v.indexOf(q) : -1;
+        const shown = i > -1
+          ? v.slice(0, i) + "<b>" + v.slice(i, i + q.length) + "</b>" + v.slice(i + q.length)
+          : v;
+        return '<button type="button" data-v="' + v + '">' + shown + '</button>';
+      }).join("");
+      list.classList.add("on");
+    };
+    input.setAttribute("role", "combobox");
+    input.setAttribute("autocomplete", "off");
+    input.addEventListener("focus", open);
+    input.addEventListener("input", open);
+    input.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
+    list.addEventListener("mousedown", e => {
+      const b = e.target.closest("button"); if(!b) return;
+      e.preventDefault();
+      input.value = b.dataset.v;
+      input.dispatchEvent(new Event("input", {bubbles:true}));
+      close();
+      if(kind === "city"){                       // the street list follows the city
+        const street = fields.find(f => comboFor(f) === "street");
+        const si = street && street.querySelector(".live");
+        if(si && STREETS[b.dataset.v] && STREETS[b.dataset.v].indexOf(si.value.trim()) === -1)
+          si.value = "";
+      }
+    });
+    input.addEventListener("blur", ()=> setTimeout(close, 120));
+  });
 }
 
 /* The delivery preference is one choice of three, settled on the spot: the
