@@ -1229,9 +1229,8 @@ function frameMap(sec, map, cfg){
 }
 
 function homeMarker(){
-  /* The same teardrop the lockers use, with the white disc that map apps put
-     inside a pin — and the house sitting in it, so the shape says "a place" and
-     the glyph says "which place". */
+  /* The same teardrop the lockers use, with the house cut out of it in white —
+     the shape says "a place", the glyph says which one. */
   const d = document.createElement("div");
   d.className = "homemk";
   d.title = "כתובת המסירה";
@@ -1239,10 +1238,9 @@ function homeMarker(){
     '<svg width="36" height="45" viewBox="-2.5 -2.5 39 48" fill="none">'
     + '<path d="M17 41S32.5 25.8 32.5 16.5A15.5 15.5 0 1 0 1.5 16.5C1.5 25.8 17 41 17 41Z" '
     + 'fill="#D8042A" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>'
-    + '<circle cx="17" cy="16.5" r="9.4" fill="#fff"/>'
-    + '<g transform="translate(11.26 10.76) scale(0.478)">'
+    + '<g transform="translate(9.65 9.15) scale(0.613)">'
     + '<path d="M1.5 23.5a1 1 0 0 1-1-1V8.8a1 1 0 0 1 .429-.821l10.5-7.3a1 1 0 0 1 1.142 0'
-    + 'l10.5 7.3a1 1 0 0 1 .429.821v13.7a1 1 0 0 1-1 1Z" fill="#D8042A"/></g></svg>';
+    + 'l10.5 7.3a1 1 0 0 1 .429.821v13.7a1 1 0 0 1-1 1Z" fill="#fff"/></g></svg>';
   return d;
 }
 
