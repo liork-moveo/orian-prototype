@@ -945,16 +945,28 @@ function wireCombos(sec){
     list.className = "comboList";
     field.appendChild(list);
 
+    /* The form arrives with "תל אביב" while the list carries "תל אביב–יפו".
+       Match on the leading word so a city typed the short way still finds its
+       streets, instead of silently offering none. */
+    const streetsFor = name => {
+      const q = (name || "").trim();
+      if(!q) return [];
+      if(STREETS[q]) return STREETS[q];
+      const key = Object.keys(STREETS).find(k => k.indexOf(q) === 0 || q.indexOf(k) === 0);
+      return key ? STREETS[key] : [];
+    };
     const source = ()=>{
       if(kind === "city") return CITIES;
       const city = cityField && cityField.querySelector(".live");
-      return STREETS[(city ? city.value : "").trim()] || [];
+      return streetsFor(city ? city.value : "");
     };
     const close = ()=>{ list.classList.remove("on"); box.classList.remove("open"); };
-    const open = ()=>{
-      const q = input.value.trim();
+    /* Opening shows everything, so a field that is already filled can still be
+       browsed. Typing is what narrows it. */
+    const open = (showAll)=>{
+      const q = showAll ? "" : input.value.trim();
       const all = source();
-      const hits = (q ? all.filter(v => v.indexOf(q) > -1) : all).slice(0, 8);
+      const hits = (q ? all.filter(v => v.indexOf(q) > -1) : all).slice(0, 40);
       if(!hits.length){ close(); return; }
       list.innerHTML = hits.map(v => {
         const i = q ? v.indexOf(q) : -1;
@@ -968,8 +980,8 @@ function wireCombos(sec){
     };
     input.setAttribute("role", "combobox");
     input.setAttribute("autocomplete", "off");
-    input.addEventListener("focus", open);
-    input.addEventListener("input", open);
+    input.addEventListener("focus", ()=> open(true));
+    input.addEventListener("input", ()=> open(false));
     input.addEventListener("keydown", e => { if(e.key === "Escape") close(); });
     list.addEventListener("mousedown", e => {
       const b = e.target.closest("button"); if(!b) return;
@@ -980,15 +992,15 @@ function wireCombos(sec){
       if(kind === "city"){                       // the street list follows the city
         const street = fields.find(f => comboFor(f) === "street");
         const si = street && street.querySelector(".live");
-        if(si && STREETS[b.dataset.v] && STREETS[b.dataset.v].indexOf(si.value.trim()) === -1)
-          si.value = "";
+        const list = streetsFor(b.dataset.v);
+        if(si && list.length && list.indexOf(si.value.trim()) === -1) si.value = "";
       }
     });
     input.addEventListener("blur", ()=> setTimeout(close, 120));
     caret.addEventListener("mousedown", e => {
       e.preventDefault();
       if(list.classList.contains("on")){ close(); }
-      else { input.focus(); open(); }
+      else { input.focus(); open(true); }
     });
   });
 }
