@@ -242,9 +242,8 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
 
 .mk.cursor{position:absolute;left:50%;top:50%;z-index:2;
            transform:translate(-50%,-100%);pointer-events:none}
-.homemk{width:30px;height:30px;border-radius:999px;background:#D8042A;
-        border:2px solid #fff;display:flex;align-items:center;justify-content:center;
-        box-shadow:0 1px 2px rgba(29,30,25,.30)}
+.homemk{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+        filter:drop-shadow(0 1px 1.5px rgba(29,30,25,.32))}
 .useracc{width:52px;height:52px;border-radius:999px;background:rgba(47,111,235,.18);
          border:1.25px solid rgba(47,111,235,.40)}
 .userdot{width:18px;height:18px;border-radius:999px;background:#2F6FEB;border:3px solid #fff;
@@ -1217,14 +1216,15 @@ function frameMap(sec, map, cfg){
 }
 
 function homeMarker(){
+  /* Streamline's house, with the figure inside removed — a red silhouette with a
+     white keyline, the same treatment the locker pins get. */
   const d = document.createElement("div");
   d.className = "homemk";
-  d.title = "הכתובת שלך";
-  d.innerHTML = '<svg width="17" height="17" viewBox="-0.81 0.43 20.95 17.14" fill="none" '
-    + 'stroke="#fff" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">'
-    + '<path d="M21 10.06c0 6.23-7.12 12.06-8.7 13.27a.5.5 0 0 1-.6 0C10.12 22.12 3 16.29 3 '
-    + '10.06c0-5.25 3.75-9.5 9-9.5s9 4.25 9 9.5Z"/>'
-    + '<path d="M10.5 14.56v-2.5a1.5 1.5 0 0 1 3 0v2.5"/><path d="M8 11.06 12 7.5l4 3.56"/></svg>';
+  d.title = "כתובת המסירה";
+  d.innerHTML = '<svg width="30" height="30" viewBox="-1 -1 26 26" fill="#D8042A" '
+    + 'stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M1.5 23.5a1 1 0 0 1-1-1V8.8a1 1 0 0 1 .429-.821l10.5-7.3a1 1 0 0 1 1.142 0'
+    + 'l10.5 7.3a1 1 0 0 1 .429.821v13.7a1 1 0 0 1-1 1Z"/></svg>';
   return d;
 }
 
@@ -1254,7 +1254,8 @@ function buildMap(sec){
   });
   if(cfg.pins !== false){
     /* the delivery address is always known — it came with the order */
-    new mapboxgl.Marker({element: homeMarker()}).setLngLat(HOME).addTo(map);
+    new mapboxgl.Marker({element: homeMarker(), anchor: "bottom"})
+      .setLngLat(HOME).addTo(map);
   }
   if(cfg.user){
     const acc = document.createElement("div"); acc.className = "useracc";
