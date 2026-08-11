@@ -246,11 +246,11 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
     </div>
 
     <div class="card p0">
-      <div class="rowline"><div class="p">מאיפה הזמנתי?</div><div class="h3">ASOS</div></div>
+      <div class="rowline"><div class="p">מאיפה הזמנתי</div><div class="h3">ASOS</div></div>
       <div class="rowline"><div class="p">מספר מעקב</div>
         <span class="h3 red" style="text-decoration:underline;text-underline-offset:3px">1234-5678-90</span>
       </div>
-      <div class="rowline"><div class="p">לאן הזמנתי?</div>
+      <div class="rowline"><div class="p">לאן הזמנתי</div>
         <div class="h3">רוטשילד 12, דירה 4, תל אביב</div></div>
     </div>
   </div>
@@ -345,7 +345,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
     </div>
 
     <div class="card p0 tight" style="padding:6px 16px 2px">
-      <div class="rowline"><div class="p">מאיפה הזמנתי?</div><div class="h3">ASOS</div></div>
+      <div class="rowline"><div class="p">מאיפה הזמנתי</div><div class="h3">ASOS</div></div>
       <div class="rowline"><div class="p">מספר מעקב</div>
         <span class="h3 red" style="text-decoration:underline;text-underline-offset:3px">1234-5678-90</span>
       </div>
@@ -542,7 +542,7 @@ section.screen svg[preserveAspectRatio]{height:100%!important;width:100%!importa
   <div class="p c">הכתובת שקיבלנו אינה מאפשרת מסירה. כדי שננסה שוב, צריך לעדכן אותה.</div>
 
   <div class="card p0">
-    <div class="rowline"><div class="p">מאיפה הזמנתי?</div><div class="h3">ASOS</div></div>
+    <div class="rowline"><div class="p">מאיפה הזמנתי</div><div class="h3">ASOS</div></div>
     <div class="rowline"><div class="p">מספר מעקב</div>
       <span class="h3 red" style="text-decoration:underline;text-underline-offset:3px">1234-5678-90</span></div>
     <div class="rowline" style="align-items:flex-start">
@@ -678,7 +678,7 @@ function saveAddress(form){
     if(sec.dataset.id === "ADDR-error") return;
     [...sec.querySelectorAll(".rowline")].forEach(r=>{
       const cells = r.children;
-      if(cells.length < 2 || label(cells[0]) !== "לאן הזמנתי?") return;
+      if(cells.length < 2 || label(cells[0]) !== "לאן הזמנתי") return;
       cells[1].innerHTML = CHECK + '<span>' + text + '</span>';
       cells[1].classList.add("okrow");
       /* The tick confirms the save; once it has been seen it stops being news. */
